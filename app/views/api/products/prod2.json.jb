@@ -1,0 +1,7 @@
+{
+  name: @prod2.name,
+  price: @prod2.price,
+  image: @prod2.image_url,
+  desc: @prod2.description,
+  color: @prod2.color,
+}
