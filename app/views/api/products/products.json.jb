@@ -1,3 +1,16 @@
+# @all.map do |product|
+# {
+#   name: product.name,
+#   price: product.price,
+#   image: product.image_url,
+#   desc: product.description,
+#   color: product.color
+# }
+
+# end
+
 {
-  all_products: @all
+  prod1: @prod1,
+  prod2: @prod2,
+  prod3: @prod3,
 }
