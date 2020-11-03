@@ -1,46 +1,47 @@
 class Api::ProductsController < ApplicationController
 
-  def display_all
+  def index
     @all = Product.all
-
-    render 'products.json.jb'
-    
+    render 'index.json.jb'
   end
 
-  def display1
-    @prod1 = Product.first
-
-    render 'prod1.json.jb'
+  def show
+    input_value = params["id"]
+    @product = Product.find_by(id: input_value)
+    render 'show.json.jb'
   end
 
-  def display2
-    @prod2 = Product.second
-
-    render 'prod2.json.jb'
+  def create
+    @product = Product.new ({
+      name: params["name"],
+      price: params["price"],
+      image_url: params["image_url"],
+      description: params["description"],
+      color: params["color"],
+    })
+    @product.save
+    render 'show.json.jb'
   end
 
-  def display3
-    @prod3 = Product.third
+  def update
+    product_id = params["id"]
+    @product = Product.find_by(id: product_id)
 
-    render 'prod3.json.jb'
+    @product.name = params["name"] || @product.name
+    @product.price = params["price"] || @product.price
+    @product.image_url = params["image_url"] || @product.image_url
+    @product.description = params["description"] || @product.description
+    @product.color = params["color"] || @product.color
+
+    @product.save
+    render 'show.json.jb'
   end
 
-  def display_query_action
-    input_value = params["product_id"]
-    @output = Product.find_by(id: input_value)
-    render 'query.json.jb'
-  end
-  
-  def display_url_action
-    input_value = params["variable"]
-    @output = Product.find_by(id: input_value)
-    render 'query.json.jb'
-  end
-
-  def display_body_action
-    input_value = params["product_id"]
-    @output = Product.find_by(id: input_value)
-    render 'query.json.jb'
+  def delete
+    product_id = params["id"]
+    @product = Product.find_by(id: product_id)
+    @product.destroy
+    render json: {message: "Product successfully DESTROYYYYEEEEEDDDDD!"}
   end
 
   def login

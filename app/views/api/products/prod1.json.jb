@@ -1,7 +1,0 @@
-{
-  name: @prod1.name,
-  price: @prod1.price,
-  image: @prod1.image_url,
-  desc: @prod1.description,
-  color: @prod1.color,
-}
