@@ -1,26 +1,44 @@
 class Api::ProductsController < ApplicationController
-
   def index
-    @all = Product.all
-    render 'index.json.jb'
+    @products = Product.all
+    search = params[:search]
+    sort = params[:sort]
+    sort_order = params[:sort_order]
+    discount = params[:discount]
+
+    if sort == "price" && sort_order == "desc"
+      @products = @products.order(price: :desc)
+    elsif discount == "true"
+      @products = @products.where("price < 10")
+    elsif sort == "price"
+      @products = @products.order(price: :asc)
+    elsif search
+      @products = @products.where("name LIKE ?", "%#{search}%")
+    elsif sort == nil
+      @products = @products.order(id: :asc)
+    end
+
+    render "index.json.jb"
   end
 
   def show
     input_value = params["id"]
     @product = Product.find_by(id: input_value)
-    render 'show.json.jb'
+    render "show.json.jb"
   end
 
   def create
     @product = Product.new ({
       name: params["name"],
       price: params["price"],
-      image_url: params["image_url"],
       description: params["description"],
       color: params["color"],
+      supplier_id: params["supplier_id"]
     })
     if @product.save
-    render 'show.json.jb'
+      Image.create!({product_id: @product.id, url: params["url"]
+      })
+      render "show.json.jb"
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end
@@ -32,21 +50,22 @@ class Api::ProductsController < ApplicationController
 
     @product.name = params["name"] || @product.name
     @product.price = params["price"] || @product.price
-    @product.image_url = params["image_url"] || @product.image_url
     @product.description = params["description"] || @product.description
     @product.color = params["color"] || @product.color
+    @product.image = params["image"] || @product.image
+    # @product.supplier = params["supplier"] || @product.supplier
     if @product.save
-      render 'show.json.jb'
-      else
-        render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
-      end
+      render "show.json.jb"
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def delete
     product_id = params["id"]
     @product = Product.find_by(id: product_id)
     @product.destroy
-    render json: {message: "Product successfully DESTROYYYYEEEEEDDDDD!"}
+    render json: { message: "Product successfully DESTROYYYYEEEEEDDDDD!" }
   end
 
   def login
@@ -57,7 +76,6 @@ class Api::ProductsController < ApplicationController
     else
       @output = "Invalid credentials"
     end
-    render 'login.json.jb'
+    render "login.json.jb"
   end
 end
-          
