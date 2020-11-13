@@ -1,23 +1,32 @@
 class Api::ProductsController < ApplicationController
+  before_action :authenticate_admin, except: [:index, :show]
+  
   def index
-    @products = Product.all
-    search = params[:search]
-    sort = params[:sort]
-    sort_order = params[:sort_order]
-    discount = params[:discount]
+    p current_user
+    
+    
+    # search = params[:search]
+    # sort = params[:sort]
+    # sort_order = params[:sort_order]
+    # discount = params[:discount]
 
-    if sort == "price" && sort_order == "desc"
-      @products = @products.order(price: :desc)
-    elsif discount == "true"
-      @products = @products.where("price < 10")
-    elsif sort == "price"
-      @products = @products.order(price: :asc)
-    elsif search
-      @products = @products.where("name LIKE ?", "%#{search}%")
-    elsif sort == nil
-      @products = @products.order(id: :asc)
+    # if sort == "price" && sort_order == "desc"
+    #   @products = @products.order(price: :desc)
+    # elsif discount == "true"
+    #   @products = @products.where("price < 10")
+    # elsif sort == "price"
+    #   @products = @products.order(price: :asc)
+    # elsif search
+    #   @products = @products.where("name LIKE ?", "%#{search}%")
+    # elsif sort == nil
+    #   @products = @products.order(id: :asc)
+    # end
+    if params["category"]
+      category = Category.find_by(name: params["category"])
+      @products = category.products
+    else
+      @products = Product.all
     end
-
     render "index.json.jb"
   end
 
@@ -68,14 +77,4 @@ class Api::ProductsController < ApplicationController
     render json: { message: "Product successfully DESTROYYYYEEEEEDDDDD!" }
   end
 
-  def login
-    input_name = params["name"]
-    input_password = params["password"]
-    if input_name == "hugh" && input_password == "swordfish"
-      @output = "Valid credentials"
-    else
-      @output = "Invalid credentials"
-    end
-    render "login.json.jb"
-  end
 end

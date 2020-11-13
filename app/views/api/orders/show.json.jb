@@ -1,0 +1,2 @@
+render partial: "order.json.jb",
+locals: { order: @order }

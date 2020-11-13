@@ -5,8 +5,7 @@
   description: product.description,
   color: product.color,
   is_discounted?: product.is_discounted?,
-  tax: product.tax,
-  total: product.total,
   images: product.images,
   supplier: product.supplier,
+  categories: product.categories
 }     
